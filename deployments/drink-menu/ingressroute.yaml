@@ -1,0 +1,23 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: drink-menu-ingressroute
+  namespace: drink-menu
+spec:
+  routes:
+  - kind: Rule
+    match: Host(`menu.blackolivepineapple.pizza`) && (PathPrefix(`/media`) || PathPrefix(`/static`))
+    services:
+    - kind: Service
+      name: nginx-drink-menu-service
+      namespace: drink-menu
+      port: 80
+  - kind: Rule
+    match: Host(`menu.blackolivepineapple.pizza`)
+    services:
+    - kind: Service
+      name: django-drink-menu-service
+      namespace: drink-menu
+      port: 80
+  tls:
+    certResolver: letsencrypt

@@ -1,0 +1,5 @@
+---
+- name: Agent playbook
+  hosts: agent
+  roles:
+    - agent

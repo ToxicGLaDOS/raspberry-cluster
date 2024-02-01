@@ -1,0 +1,16 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: kanboard-ingressroute
+  namespace: kanboard
+spec:
+  routes:
+  - kind: Rule
+    match: Host(`kanboard.blackolivepineapple.pizza`)
+    services:
+    - kind: Service
+      name: kanboard-service
+      namespace: kanboard
+      port: 80
+  tls:
+    certResolver: letsencrypt

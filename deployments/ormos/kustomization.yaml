@@ -1,0 +1,19 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: ormos
+resources:
+- deployment.yaml
+- ingressroute.yaml
+- namespace.yaml
+- postgres.yaml
+- pv.yaml
+- pvc.yaml
+- service.yaml
+secretGenerator:
+- name: ormos-secrets
+  envs:
+  - .env.ormos
+- name: postgres-secrets
+  envs:
+  - .env.postgres

@@ -1,0 +1,48 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: drink-menu-media-ro-pvc
+  namespace: drink-menu
+  annotations:
+    backup.kubernetes.io/deltas: P1D P7D
+spec:
+  storageClassName: nfs
+  # VolumeName specifies which pv to bind to
+  volumeName: drink-menu-media-ro-volume
+  accessModes:
+    - ReadOnlyMany
+  resources:
+    requests:
+      storage: 1Gi
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: drink-menu-media-rw-pvc
+  namespace: drink-menu
+  annotations:
+    backup.kubernetes.io/deltas: P1D P7D
+spec:
+  storageClassName: nfs
+  volumeName: drink-menu-media-rw-volume
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: drink-menu-static-ro-pvc
+  namespace: drink-menu
+  annotations:
+    backup.kubernetes.io/deltas: P1D P7D
+spec:
+  storageClassName: nfs
+  volumeName: drink-menu-static-ro-volume
+  accessModes:
+    - ReadOnlyMany
+  resources:
+    requests:
+      storage: 1Gi

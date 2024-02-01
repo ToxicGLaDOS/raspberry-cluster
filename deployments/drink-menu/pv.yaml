@@ -1,0 +1,50 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: drink-menu-media-ro-volume
+  namespace: drink-menu
+spec:
+  storageClassName: nfs
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadOnlyMany
+  mountOptions:
+    - nfsvers=4.2
+  nfs:
+    path: "/watermelon-pool/drink-menu/nginx/media"
+    server: watermelon
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: drink-menu-media-rw-volume
+  namespace: drink-menu
+spec:
+  storageClassName: nfs
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
+  mountOptions:
+    - nfsvers=4.2
+  nfs:
+    path: "/watermelon-pool/drink-menu/nginx/media"
+    server: watermelon
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: drink-menu-static-ro-volume
+  namespace: drink-menu
+spec:
+  storageClassName: nfs
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadOnlyMany
+  mountOptions:
+    - nfsvers=4.2
+  nfs:
+    path: "/watermelon-pool/drink-menu/nginx/static"
+    server: watermelon

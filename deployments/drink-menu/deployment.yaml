@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: drink-menu
+  name: drink-menu
+  namespace: drink-menu
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: drink-menu
+  template:
+    metadata:
+      labels:
+        app: drink-menu
+    spec:
+      containers:
+      - image: toxicglados/drink-menu:latest
+        name: drink-menu-django
+        securityContext:
+          runAsUser: 2003 # Maps to the "drink-menu" user on the nas
+        ports:
+          - containerPort: 8080
+        env:
+          - name: DATABASE_PASSWORD # password for postgres database
+            valueFrom:
+              secretKeyRef:
+                name: postgres-secrets
+                key: POSTGRES_PASSWORD
+          - name: SECRET_KEY # django secret_key
+            valueFrom:
+              secretKeyRef:
+                name: drink-menu-secrets
+                key: DJANGO_SECRET_KEY
+        volumeMounts:
+          - mountPath: /media
+            name: drink-menu-media-rw-volume
+      - image: nginx:latest
+        imagePullPolicy: Always
+        name: drink-menu-nginx
+        ports:
+          - containerPort: 80
+        volumeMounts:
+          - mountPath: /var/www/static
+            name: drink-menu-static-ro-volume
+          - mountPath: /var/www/media
+            name: drink-menu-media-ro-volume
+          - mountPath: /etc/nginx/conf.d
+            name: drink-menu-config-volume
+      volumes:
+        - name: drink-menu-media-ro-volume
+          persistentVolumeClaim:
+            claimName: drink-menu-media-ro-pvc
+        - name: drink-menu-media-rw-volume
+          persistentVolumeClaim:
+            claimName: drink-menu-media-rw-pvc
+        - name: drink-menu-static-ro-volume
+          persistentVolumeClaim:
+            claimName: drink-menu-static-ro-pvc
+        - name: drink-menu-config-volume
+          configMap:
+            name: drink-menu-config

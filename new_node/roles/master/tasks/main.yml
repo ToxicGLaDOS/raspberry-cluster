@@ -1,0 +1,36 @@
+---
+- name: Download k3s file from github
+  get_url:
+    dest: /bin/k3s
+    url: https://github.com/k3s-io/k3s/releases/download/v1.23.3%2Bk3s1/k3s-arm64
+    owner: root
+    group: root
+    mode: 0755
+  become: yes
+
+- name: Create k3s-master service directory
+  file:
+    state: directory
+    path: /etc/sv/k3s-master
+  become: yes
+
+- name: Copy run file in k3s-master service directory
+  copy:
+    src: run
+    dest: /etc/sv/k3s-master/run
+    mode: 0744
+  become: yes
+
+- name: Template out conf for k3s-master service
+  template:
+    src: conf.j2
+    dest: /etc/sv/k3s-master/conf
+    mode: 0600
+  become: yes
+
+- name: Create symbolic link
+  file:
+    src: /etc/sv/k3s-master
+    dest: /var/service/k3s-master
+    state: link
+  become: yes

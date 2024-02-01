@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: django-drink-menu-service
+  namespace: drink-menu
+spec:
+  type: ClusterIP
+  selector:
+    app: drink-menu
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-drink-menu-service
+  namespace: drink-menu
+spec:
+  type: ClusterIP
+  selector:
+    app: drink-menu
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80

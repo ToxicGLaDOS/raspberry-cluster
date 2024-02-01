@@ -1,0 +1,1 @@
+ansible-playbook -i inventory.yml --ask-vault-pass --extra-vars '@vault' master.yml

@@ -1,0 +1,16 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: blog-ingressroute
+  namespace: blog
+spec:
+  routes:
+  - kind: Rule
+    match: Host(`blackolivepineapple.pizza`)
+    services:
+    - kind: Service
+      name: blog-service
+      namespace: blog
+      port: 8080
+  tls:
+    certResolver: letsencrypt

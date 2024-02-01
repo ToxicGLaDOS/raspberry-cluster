@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: cavetown
+  name: cavetown
+  namespace: cavetown
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cavetown
+  template:
+    metadata:
+      labels:
+        app: cavetown
+    spec:
+      #securityContext:
+      #  runAsUser: 2004 # Maps to the "cavetown" user on the nas
+      containers:
+      - image: nginx:latest
+        imagePullPolicy: Always
+        name: cavetown
+        ports:
+          - containerPort: 80
+        volumeMounts:
+          - mountPath: /var/www
+            name: cavetown-volume
+          - mountPath: /etc/nginx/conf.d
+            name: cavetown-config-volume
+      volumes:
+        - name: cavetown-volume
+          persistentVolumeClaim:
+            claimName: cavetown-pv-claim
+        - name: cavetown-config-volume
+          configMap:
+            name: cavetown-config
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always

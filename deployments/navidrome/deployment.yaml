@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: navidrome
+  name: navidrome
+  namespace: navidrome
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: navidrome
+  template:
+    metadata:
+      labels:
+        app: navidrome
+    spec:
+      containers:
+      # This is the image linked in the docs
+      # https://www.navidrome.org/docs/installation/docker/
+      - image: deluan/navidrome:latest
+        name: navidrome
+        env:
+          - name: ND_ENABLESHARING
+            value: "true"
+        securityContext:
+          runAsUser: 2005
+          runAsGroup: 2005
+        ports:
+          - containerPort: 80
+          - containerPort: 4533
+        volumeMounts:
+          # Just make sure the data directory exists
+          - mountPath: /data
+            name: data
+          - mountPath: /music
+            name: music
+      volumes:
+        - name: music
+          persistentVolumeClaim:
+              claimName: navidrome-music-claim
+        - name: data
+          persistentVolumeClaim:
+              claimName: navidrome-data-claim

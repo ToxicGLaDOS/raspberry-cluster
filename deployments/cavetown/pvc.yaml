@@ -1,0 +1,14 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: cavetown-pv-claim
+  namespace: cavetown
+  annotations:
+    backup.kubernetes.io/deltas: P1D P7D
+spec:
+  storageClassName: nfs
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi

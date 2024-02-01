@@ -1,0 +1,16 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: cavetown-ingressroute
+  namespace: cavetown
+spec:
+  routes:
+  - kind: Rule
+    match: Host(`cavetown.blackolivepineapple.pizza`)
+    services:
+    - kind: Service
+      name: cavetown-service
+      namespace: cavetown
+      port: 8088
+  tls:
+    certResolver: letsencrypt

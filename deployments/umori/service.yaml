@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: umori-service
+  namespace: umori
+spec:
+  type: ClusterIP
+  selector:
+    app: umori
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+

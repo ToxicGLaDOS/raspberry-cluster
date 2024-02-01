@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: jellyfin-proxy
+  name: jellyfin-proxy
+  namespace: jellyfin-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jellyfin-proxy
+  template:
+    metadata:
+      labels:
+        app: jellyfin-proxy
+    spec:
+      containers:
+      - image: nginx:latest
+        name: jellyfin-proxy
+        ports:
+          - containerPort: 80
+        volumeMounts:
+        - name: nginx-conf
+          mountPath: /etc/nginx/conf.d/
+      volumes:
+      - name: nginx-conf
+        configMap:
+          name: jellyfin-blackolivepineapple-config
+          items:
+            - key: jellyfin.blackolivepineapple.pizza.conf
+              path: jellyfin.blackolivepineapple.pizza.conf
+

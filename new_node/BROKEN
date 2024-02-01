@@ -1,0 +1,1 @@
+The master node just generates a random token even when given one. Not sure why

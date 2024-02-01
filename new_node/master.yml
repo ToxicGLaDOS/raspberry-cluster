@@ -1,0 +1,5 @@
+---
+- name: Master playbook
+  hosts: master
+  roles:
+    - master

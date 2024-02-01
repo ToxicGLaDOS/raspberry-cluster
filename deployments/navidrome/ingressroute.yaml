@@ -1,0 +1,17 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: navidrome-ingressroute
+  namespace: navidrome
+spec:
+  routes:
+  - kind: Rule
+    match: Host(`navidrome.blackolivepineapple.pizza`)
+    services:
+    - kind: Service
+      name: navidrome-service
+      namespace: navidrome
+      port: 4533
+  tls:
+    certResolver: letsencrypt

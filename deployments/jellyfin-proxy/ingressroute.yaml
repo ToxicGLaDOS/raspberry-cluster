@@ -1,0 +1,16 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: jellyfin-proxy-ingressroute
+  namespace: jellyfin-proxy
+spec:
+  routes:
+  - kind: Rule
+    match: Host(`jellyfin.blackolivepineapple.pizza`)
+    services:
+    - kind: Service
+      name: jellyfin-proxy-service
+      namespace: jellyfin-proxy
+      port: 80
+  tls:
+    certResolver: letsencrypt

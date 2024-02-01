@@ -1,0 +1,34 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: navidrome-data-volume
+  namespace: navidrome
+spec:
+  storageClassName: nfs
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
+  mountOptions:
+    - nfsvers=4.2
+  nfs:
+    path: "/watermelon-pool/navidrome/data"
+    server: watermelon
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: navidrome-music-volume
+  namespace: navidrome
+spec:
+  storageClassName: nfs
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadOnlyMany
+  mountOptions:
+    - nfsvers=4.2
+  nfs:
+    # TODO: Funkwhale is the legacy name update to navidrome
+    path: "/watermelon-pool/funkwhale/music"
+    server: watermelon

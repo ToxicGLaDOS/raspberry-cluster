@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: umori
+  name: umori
+  namespace: umori
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: umori
+  template:
+    metadata:
+      labels:
+        app: umori
+    spec:
+      containers:
+      - image: toxicglados/umori:latest
+        imagePullPolicy: Always
+        name: umori
+        ports:
+          - containerPort: 80
+        env:
+          - name: SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: umori-secrets
+                key: SECRET_KEY
+          - name: DB_HOST
+            value: postgres.umori.svc.cluster.local
+          - name: DB_USER
+            value: postgres
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: postgres-secrets
+                key: POSTGRES_PASSWORD

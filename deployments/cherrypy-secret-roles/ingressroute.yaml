@@ -1,0 +1,16 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: secret-roles-ingressroute
+  namespace: secret-roles
+spec:
+  routes:
+  - kind: Rule
+    match: Host(`secret-roles.blackolivepineapple.pizza`)
+    services:
+    - kind: Service
+      name: secret-roles-service
+      namespace: secret-roles
+      port: 8081
+  tls:
+    certResolver: letsencrypt

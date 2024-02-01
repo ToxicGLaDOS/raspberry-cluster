@@ -1,0 +1,10 @@
+all:
+  hosts:
+  children:
+    master:
+      hosts:
+        raspberry0:
+    agent:
+      hosts:
+        raspberry1:
+        raspberry2:

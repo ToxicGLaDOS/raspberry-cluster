@@ -1,0 +1,16 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: ormos-ingressroute
+  namespace: ormos
+spec:
+  routes:
+  - kind: Rule
+    match: Host(`ormos.blackolivepineapple.pizza`)
+    services:
+    - kind: Service
+      name: ormos-service
+      namespace: ormos
+      port: 8080
+  tls:
+    certResolver: letsencrypt

@@ -1,0 +1,112 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  namespace: drink-menu
+  labels:
+    app: postgres
+data:
+  POSTGRES_DB: postgresdb
+  POSTGRES_USER: postgresadmin
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config-file
+  namespace: drink-menu
+  labels:
+    app: postgres
+data:
+  postgres.conf: |
+    listen_addresses = '*'
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+  namespace: drink-menu
+spec:
+  serviceName: "postgres"
+  selector:
+    matchLabels:
+      app: postgres
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      securityContext:
+        runAsUser: 2003 # Maps to the "drink-menu" user on the nas
+      containers:
+        - name: postgres
+          image: postgres:14.1
+          args:
+            - -c
+            - 'config_file=/etc/postgresql/postgres.conf'
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - configMapRef:
+                name: postgres-config
+            - secretRef:
+                name: postgres-secrets
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-volume
+            - mountPath: /etc/postgresql
+              name: postgres-config-volume
+      volumes:
+        - name: postgres-volume
+          persistentVolumeClaim:
+            claimName: postgres-pv-claim
+        - name: postgres-config-volume
+          configMap:
+            name: postgres-config-file
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: drink-menu
+  labels:
+    app: postgres
+spec:
+  selector:
+    app: postgres
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: postgres-drink-menu-volume
+  namespace: drink-menu
+spec:
+  storageClassName: nfs
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
+  mountOptions:
+    - nfsvers=4.2
+  nfs:
+    path: "/watermelon-pool/drink-menu/postgresdb"
+    server: watermelon
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: postgres-pv-claim
+  namespace: drink-menu
+  annotations:
+    backup.kubernetes.io/deltas: P1D P7D
+spec:
+  storageClassName: nfs
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi

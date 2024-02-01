@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: blog
+  name: blog
+  namespace: blog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: blog
+  template:
+    metadata:
+      labels:
+        app: blog
+    spec:
+      containers:
+      - image: toxicglados/blog
+        name: blog
+        volumeMounts:
+        - mountPath: /etc/nginx/conf.d
+          name: blackolivepineapple-config-volume
+        ports:
+          - containerPort: 80
+      volumes:
+      - name: blackolivepineapple-config-volume
+        configMap:
+          name: blackolivepineapple-config

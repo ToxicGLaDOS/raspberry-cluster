@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: ormos
+  name: ormos
+  namespace: ormos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ormos
+  template:
+    metadata:
+      labels:
+        app: ormos
+    spec:
+      containers:
+      - image: toxicglados/ormos:latest
+        name: ormos
+        env:
+          - name: POSTGRES_USER
+            value: postgres
+          - name: POSTGRES_DB
+            value: ormos
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: postgres-secrets
+                key: POSTGRES_PASSWORD
+          - name: POST_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: ormos-secrets
+                key: POST_TOKEN
+          - name: POSTGRES_HOST
+            value: postgres
+          - name: POSTGRES_PORT
+            value: "5432"
+        ports:
+          - name: http
+            containerPort: 80
+            protocol: TCP
+          - name: https
+            containerPort: 443
+            protocol: TCP

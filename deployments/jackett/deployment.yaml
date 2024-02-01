@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: jackett
+  name: jackett
+  namespace: jackett
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jackett
+  template:
+    metadata:
+      labels:
+        app: jackett
+    spec:
+      containers:
+      - image: linuxserver/jackett:latest
+        name: jackett
+        env:
+          - name: PUID
+            value: '2006'
+          - name: PGID
+            value: '2006'
+        ports:
+          - containerPort: 80
+        volumeMounts:
+          - mountPath: /config
+            name: config
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+              claimName: jackett-config-claim

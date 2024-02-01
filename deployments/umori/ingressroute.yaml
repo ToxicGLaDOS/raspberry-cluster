@@ -1,0 +1,16 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: umori-ingressroute
+  namespace: umori
+spec:
+  routes:
+  - kind: Rule
+    match: Host(`umori.blackolivepineapple.pizza`)
+    services:
+    - kind: Service
+      name: umori-service
+      namespace: umori
+      port: 80
+  tls:
+    certResolver: letsencrypt

@@ -1,0 +1,9 @@
+#!/bin/sh
+[ -r conf ] && . ./conf
+# It's been a while since I wrote this, but I think
+# we disable traefik because we have our own custom traefik
+# instance that we deploy to automate certs.
+#
+# The custom-traefik thing isn't in the ansible though
+# so that might be a TODO
+exec /usr/bin/k3s server --token "$TOKEN" --disable traefik

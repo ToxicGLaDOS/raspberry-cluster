@@ -1,0 +1,81 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  namespace: kanboard
+  labels:
+    app: postgres
+data:
+  POSTGRES_DB: postgresdb
+  POSTGRES_USER: postgresadmin
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config-file
+  namespace: kanboard
+  labels:
+    app: postgres
+data:
+  postgres.conf: |
+    listen_addresses = '*'
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+  namespace: kanboard
+spec:
+  serviceName: "postgres"
+  selector:
+    matchLabels:
+      app: postgres
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      securityContext:
+        runAsUser: 2000 # Maps to the "kanboard" user on the nas
+      containers:
+        - name: postgres
+          image: postgres:14
+          args:
+            - -c
+            - 'config_file=/etc/postgresql/postgres.conf'
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - configMapRef:
+                name: postgres-config
+            - secretRef:
+                name: postgres-secrets
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-volume
+            - mountPath: /etc/postgresql
+              name: postgres-config-volume
+      volumes:
+        - name: postgres-volume
+          persistentVolumeClaim:
+            claimName: postgres-pv-claim
+        - name: postgres-config-volume
+          configMap:
+            name: postgres-config-file
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: kanboard
+  labels:
+    app: postgres
+spec:
+  selector:
+    app: postgres
+  ports:
+    - protocol: TCP
+      name: http
+      port: 5432
+      targetPort: 5432

@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: secret-roles
+  name: secret-roles
+  namespace: secret-roles
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: secret-roles
+  template:
+    metadata:
+      labels:
+        app: secret-roles
+    spec:
+      containers:
+      - image: toxicglados/cherrypy-secret-roles:latest
+        imagePullPolicy: Always
+        name: secret-roles
+        ports:
+          - containerPort: 8080

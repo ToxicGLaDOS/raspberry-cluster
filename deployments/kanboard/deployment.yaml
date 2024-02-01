@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: kanboard
+  name: kanboard
+  namespace: kanboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kanboard
+  template:
+    metadata:
+      labels:
+        app: kanboard
+    spec:
+      containers:
+      - image: kanboard/kanboard:v1.2.18
+        imagePullPolicy: Always
+        name: kanboard
+        ports:
+          - containerPort: 80
+          - containerPort: 443
+        env:
+          - name: DATABASE_URL
+            valueFrom:
+              secretKeyRef:
+                name: kanboard-secrets
+                key: DATABASE_URL

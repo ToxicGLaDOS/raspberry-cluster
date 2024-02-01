@@ -1,0 +1,16 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: drone-ingressroute
+  namespace: drone
+spec:
+  routes:
+  - kind: Rule
+    match: Host(`drone.blackolivepineapple.pizza`)
+    services:
+    - kind: Service
+      name: drone-service
+      namespace: drone
+      port: 80
+  tls:
+    certResolver: letsencrypt
