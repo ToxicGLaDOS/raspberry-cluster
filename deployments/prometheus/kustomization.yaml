@@ -8,6 +8,5 @@ resources:
 - namespace.yaml
 - rbac.yaml
 - service.yaml
-- ingressroute.yaml
 - pv.yaml
 - pvc.yaml
