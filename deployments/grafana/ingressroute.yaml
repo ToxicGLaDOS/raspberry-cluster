@@ -1,0 +1,16 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: grafana-ingressroute
+  namespace: grafana
+spec:
+  routes:
+  - kind: Rule
+    match: Host(`grafana.blackolivepineapple.pizza`)
+    services:
+    - kind: Service
+      name: grafana-service
+      namespace: grafana
+      port: 8080
+  tls:
+    certResolver: letsencrypt
