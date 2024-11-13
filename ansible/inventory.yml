@@ -1,5 +1,6 @@
 all:
   hosts:
+    watermelon:
   children:
     master:
       hosts:

@@ -1,0 +1,2 @@
+- name: Install prometheus disk usage exporter
+  ansible.builtin.include_tasks: prometheus_disk_usage_exporter.yml

@@ -1,0 +1,50 @@
+---
+- name: Install disk_usage_exporter from github
+  become: true
+  ansible.builtin.unarchive:
+    src: "{{ lookup('url', 'https://api.github.com/repos/dundee/disk_usage_exporter/releases/latest', split_lines=false) | regex_search('browser_download_url.*(https://(.*?)_linux_amd64.tgz)', '\\1') | first }}"
+    dest: '/tmp'
+    remote_src: true
+
+- name: Copy disk_usage_exporter to /usr/bin
+  become: true
+  ansible.builtin.copy:
+    remote_src: True
+    src: /tmp/disk_usage_exporter_linux_amd64
+    dest: /usr/bin/disk-usage-exporter
+    mode: 0755
+
+- name: Create service directory
+  become: true
+  ansible.builtin.file:
+    state: directory
+    path: /etc/sv/disk-usage-exporter
+    mode: 0755
+
+- name: Create service directory
+  become: true
+  ansible.builtin.file:
+    state: directory
+    path: /etc/sv/disk-usage-exporter/log
+    mode: 0755
+
+- name: Create service file
+  become: true
+  ansible.builtin.copy:
+    src: disk_usage_exporter_service
+    dest: /etc/sv/disk-usage-exporter/run
+    mode: 0755
+
+- name: Create service log file
+  become: true
+  ansible.builtin.copy:
+    src: disk_usage_exporter_log
+    dest: /etc/sv/disk-usage-exporter/log/run
+    mode: 0755
+
+- name: Start disk usage exporter service
+  become: true
+  community.general.runit:
+    name: disk-usage-exporter
+    enabled: true
+    state: started
