@@ -12,7 +12,7 @@ spec:
   mountOptions:
     - nfsvers=4.2
   nfs:
-    path: "/watermelon-pool/navidrome/data"
+    path: "/watermelon-pool/encrypted/navidrome/data"
     server: watermelon
 ---
 kind: PersistentVolume
@@ -29,6 +29,5 @@ spec:
   mountOptions:
     - nfsvers=4.2
   nfs:
-    # TODO: Funkwhale is the legacy name update to navidrome
-    path: "/watermelon-pool/funkwhale/music"
+    path: "/watermelon-pool/encrypted/music"
     server: watermelon
