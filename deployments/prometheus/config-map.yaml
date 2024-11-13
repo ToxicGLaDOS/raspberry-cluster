@@ -33,6 +33,11 @@ data:
       - job_name: 'traefik'
         static_configs:
         - targets: ['traefik:8080']
+      - job_name: 'disk-usage'
+        scrape_interval: 5m
+        scrape_timeout: 20s
+        static_configs:
+        - targets: ['192.168.1.249:9995']
       - job_name: 'node-exporter'
         kubernetes_sd_configs:
           - role: endpoints
