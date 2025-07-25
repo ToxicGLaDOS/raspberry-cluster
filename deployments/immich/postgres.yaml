@@ -1,0 +1,116 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  namespace: immich
+  labels:
+    app: postgres
+data:
+  POSTGRES_DB: postgresdb
+  POSTGRES_USER: postgresadmin
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config-file
+  namespace: immich
+  labels:
+    app: postgres
+data:
+  postgres.conf: |
+    listen_addresses = '*'
+    shared_preload_libraries = 'vectors.so'
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+  namespace: immich
+spec:
+  serviceName: "postgres"
+  selector:
+    matchLabels:
+      app: postgres
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      securityContext:
+        runAsUser: 2015 # Maps to the "immich" user on the nas
+      containers:
+        - name: postgres
+          # We need a special postgres extension hence this weird image
+          # Also immich only supports pgvecto version >=0.2 <0.4
+          # and pgvecto only has images on version <0.4 for older postgres versions
+          # so we install pg15 rather than the latest release of pg17
+          image: ghcr.io/tensorchord/pgvecto-rs:pg15-v0.3.0
+          args:
+            - -c
+            - 'config_file=/etc/postgresql/postgres.conf'
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - configMapRef:
+                name: postgres-config
+            - secretRef:
+                name: postgres-secrets
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-volume
+            - mountPath: /etc/postgresql
+              name: postgres-config-volume
+      volumes:
+        - name: postgres-volume
+          persistentVolumeClaim:
+            claimName: postgres-pv-claim
+        - name: postgres-config-volume
+          configMap:
+            name: postgres-config-file
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: immich
+  labels:
+    app: postgres
+spec:
+  selector:
+    app: postgres
+  ports:
+    - protocol: TCP
+      name: http
+      port: 5432
+      targetPort: 5432
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: postgres-immich-volume
+  namespace: immich
+spec:
+  storageClassName: nfs
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
+  mountOptions:
+    - nfsvers=4.2
+  nfs:
+    path: "/watermelon-pool/encrypted/immich/postgres"
+    server: watermelon
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: postgres-pv-claim
+  namespace: immich
+spec:
+  storageClassName: nfs
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi

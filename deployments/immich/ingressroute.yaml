@@ -1,0 +1,16 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: immich-ingressroute
+  namespace: immich
+spec:
+  routes:
+  - kind: Rule
+    match: Host(`immich.blackolivepineapple.pizza`)
+    services:
+    - kind: Service
+      name: immich-server
+      namespace: immich
+      port: 2283
+  tls:
+    certResolver: letsencrypt

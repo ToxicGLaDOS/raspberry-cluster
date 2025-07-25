@@ -1,0 +1,19 @@
+env:
+  DB_HOSTNAME: "postgres"
+  DB_USERNAME: "postgresadmin"
+  DB_DATABASE_NAME: "postgresdb"
+
+immich:
+  persistence:
+    # Main data store for all photos shared between different components.
+    library:
+      # Automatically creating the library volume is not supported by this chart
+      # You have to specify an existing PVC to use
+      existingClaim: persistence-pv-claim
+
+redis:
+  enabled: true
+
+common:
+  podSecurityContext:
+    runAsUser: 2015
