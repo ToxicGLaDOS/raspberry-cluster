@@ -37,7 +37,7 @@ data:
         scrape_interval: 5m
         scrape_timeout: 20s
         static_configs:
-        - targets: ['192.168.1.249:9995']
+        - targets: ['watermelon:9995']
       #- job_name: 'node-exporter'
       #  kubernetes_sd_configs:
       #    - role: endpoints
