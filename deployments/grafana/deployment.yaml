@@ -17,6 +17,7 @@ spec:
     spec:
       securityContext:
         runAsUser: 2013 # Maps to the "grafana" user on the nas
+        runAsGroup: 2013
       containers:
       - image: grafana/grafana-oss
         name: grafana
