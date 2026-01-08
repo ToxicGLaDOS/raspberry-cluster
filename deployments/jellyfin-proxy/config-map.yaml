@@ -12,8 +12,7 @@ data:
 
         location / {
           # Not sure why local DNS doesn't work in the cluster
-          #proxy_pass http://cherry.home:8096;
-          proxy_pass http://192.168.1.245:8096;
+          proxy_pass http://cherry.lan:8096;
 
           # WebSocket support (for jellyfin-mpv-shim)
           proxy_http_version 1.1;
