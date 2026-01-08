@@ -1,0 +1,13 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: snapcast-config
+  namespace: mopidy
+data:
+  snapserver.conf: |
+    # This comes from here: https://github.com/badaix/snapcast/blob/develop/doc/configuration.md#tcp-server
+    # Especially which port to point it to. I don't think anywhere else says that
+    [stream]
+    # user configuration
+    source = tcp://127.0.0.1:4953?name=mopidy&mode=server

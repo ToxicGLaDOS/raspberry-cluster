@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mopidy
+  name: mopidy
+  namespace: mopidy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mopidy
+  template:
+    metadata:
+      labels:
+        app: mopidy
+    spec:
+      containers:
+      # This is the hash that's python3.11 and seems to work (except the gstreamer):
+      # docker.io/jojo141185/mopidy@sha256:487bfe3d20ba10f74bafc9ea14838d5316cccba2956a1b2464074bea8047ba7d
+      - image: docker.io/jojo141185/mopidy:release
+        name: mopidy
+        imagePullPolicy: Always
+        volumeMounts:
+        - mountPath: /config
+          name: mopidy-config-volume
+        env:
+          - name: PIP_PACKAGES
+            value: Mopidy-Subidy Mopidy-Iris
+        ports:
+          - containerPort: 6680
+      - image: docker.io/toxicglados/firefrei-snapcast:latest
+        name: snapcast
+        ports:
+          - containerPort: 1704
+          - containerPort: 1705
+          - containerPort: 1780
+          - containerPort: 1788
+        volumeMounts:
+        - mountPath: /app/config
+          name: snapcast-config-volume
+      volumes:
+      - name: mopidy-config-volume
+        secret:
+          secretName: mopidy-config
+      - name: snapcast-config-volume
+        configMap:
+          name: snapcast-config

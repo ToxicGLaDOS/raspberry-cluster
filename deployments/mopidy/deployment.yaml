@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mopidy
+  name: mopidy
+  namespace: mopidy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mopidy
+  template:
+    metadata:
+      labels:
+        app: mopidy
+    spec:
+      containers:
+      # Using my own container for now because jojo's container is broken
+      - image: toxicglados/mopidy:latest
+        name: mopidy
+        imagePullPolicy: Always
+        volumeMounts:
+        - mountPath: /root/.config/mopidy
+          name: mopidy-config-volume
+        ports:
+          - containerPort: 6680
+      - image: docker.io/toxicglados/firefrei-snapcast:latest
+        name: snapcast
+        ports:
+          - containerPort: 1704
+          - containerPort: 1705
+          - containerPort: 1780
+          - containerPort: 1788
+        volumeMounts:
+        - mountPath: /app/config
+          name: snapcast-config-volume
+      volumes:
+      - name: mopidy-config-volume
+        secret:
+          secretName: mopidy-config
+      - name: snapcast-config-volume
+        configMap:
+          name: snapcast-config
