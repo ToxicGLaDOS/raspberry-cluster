@@ -9,3 +9,7 @@ resources:
 - pv.yaml
 - pvc.yaml
 - service.yaml
+secretGenerator:
+- name: navidrome-secrets
+  envs:
+  - .env
