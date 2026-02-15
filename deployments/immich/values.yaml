@@ -1,7 +1,12 @@
-env:
-  DB_HOSTNAME: "postgres"
-  DB_USERNAME: "postgresadmin"
-  DB_DATABASE_NAME: "postgresdb"
+server:
+  controllers:
+    main:
+      containers:
+        main:
+          env:
+            DB_HOSTNAME: "postgres"
+            DB_USERNAME: "postgresadmin"
+            DB_DATABASE_NAME: "postgresdb"
 
 immich:
   persistence:
@@ -11,9 +16,10 @@ immich:
       # You have to specify an existing PVC to use
       existingClaim: persistence-pv-claim
 
-redis:
+valkey:
   enabled: true
 
 common:
-  podSecurityContext:
-    runAsUser: 2015
+  defaultPodOptions:
+    securityContext:
+      runAsUser: 2015

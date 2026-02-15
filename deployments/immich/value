@@ -1,0 +1,12 @@
+postgresdb=# SELECT atttypmod as dimsize
+    FROM pg_attribute f
+    JOIN pg_class c ON c.oid = f.attrelid
+    WHERE c.relkind = 'r'::char
+    AND f.attnum > 0
+    AND c.relname = 'smart_search'::text
+    AND f.attname = 'embedding'::text;
+ dimsize 
+---------
+     512
+(1 row)
+

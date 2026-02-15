@@ -1,3 +1,4 @@
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -17,9 +18,9 @@ metadata:
   labels:
     app: postgres
 data:
-  postgres.conf: |
+  postgres_config.conf: |
     listen_addresses = '*'
-    shared_preload_libraries = 'vectors.so'
+    shared_preload_libraries = 'vchord.so'
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -42,13 +43,10 @@ spec:
       containers:
         - name: postgres
           # We need a special postgres extension hence this weird image
-          # Also immich only supports pgvecto version >=0.2 <0.4
-          # and pgvecto only has images on version <0.4 for older postgres versions
-          # so we install pg15 rather than the latest release of pg17
-          image: ghcr.io/tensorchord/pgvecto-rs:pg15-v0.3.0
-          args:
-            - -c
-            - 'config_file=/etc/postgresql/postgres.conf'
+          # Updating the version of vectorchord doesn't seem to actually change it
+          # on the database. I had to do `DROP EXTENSION vchord;` then `CREATE EXTENSION IF NOT EXISTS vchord CASCADE;`
+          # to actually get it to update. I'm not sure if that was the best way, but it worked.
+          image: ghcr.io/immich-app/postgres:15-vectorchord0.4.3
           ports:
             - containerPort: 5432
           envFrom:
@@ -59,8 +57,6 @@ spec:
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
               name: postgres-volume
-            - mountPath: /etc/postgresql
-              name: postgres-config-volume
       volumes:
         - name: postgres-volume
           persistentVolumeClaim:
