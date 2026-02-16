@@ -1,0 +1,19 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: yamtrack
+resources:
+- deployment.yaml
+- ingressroute.yaml
+- namespace.yaml
+- postgres.yaml
+- pv.yaml
+- pvc.yaml
+- service.yaml
+secretGenerator:
+- name: yamtrack-secrets
+  envs:
+  - .env.yamtrack
+- name: postgres-secrets
+  envs:
+  - .env.postgres

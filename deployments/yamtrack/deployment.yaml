@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: yamtrack
+  name: yamtrack
+  namespace: yamtrack
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: yamtrack
+  template:
+    metadata:
+      labels:
+        app: yamtrack
+    spec:
+      containers:
+      - image: ghcr.io/fuzzygrim/yamtrack
+        imagePullPolicy: Always
+        name: yamtrack
+        ports:
+          - containerPort: 8000
+        env:
+          - name: TZ
+            value: America/Chicago
+          - name: REDIS_URL
+            value: redis://localhost:6379
+          - name: ADMIN_ENABLED
+            value: "True"
+          # Disable user registration
+          - name: REGISTRATION
+            value: "False"
+          - name: SECRET
+            valueFrom:
+              secretKeyRef:
+                name: yamtrack-secrets
+                key: YAMTRACK_SECRET
+          - name: DB_HOST
+            value: postgres.yamtrack.svc.cluster.local
+          - name: DB_NAME
+            value: yamtrack
+          - name: DB_USER
+            value: yamtrack
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: postgres-secrets
+                key: POSTGRES_PASSWORD
+          - name: DB_PORT
+            value: "5432"
+      - image: redis:8-alpine
+        imagePullPolicy: Always
+        name: redis

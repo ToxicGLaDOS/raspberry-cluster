@@ -1,0 +1,16 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: yamtrack-ingressroute
+  namespace: yamtrack
+spec:
+  routes:
+  - kind: Rule
+    match: Host(`yamtrack.blackolivepineapple.pizza`)
+    services:
+    - kind: Service
+      name: yamtrack-service
+      namespace: yamtrack
+      port: 8000
+  tls:
+    certResolver: letsencrypt
