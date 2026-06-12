@@ -1,0 +1,16 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: sharry-ingressroute
+  namespace: sharry
+spec:
+  routes:
+  - kind: Rule
+    match: Host(`sharry.blackolivepineapple.pizza`)
+    services:
+    - kind: Service
+      name: sharry-service
+      namespace: sharry
+      port: 8085
+  tls:
+    certResolver: letsencrypt

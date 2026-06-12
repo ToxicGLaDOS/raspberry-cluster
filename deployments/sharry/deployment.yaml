@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: sharry
+  name: sharry
+  namespace: sharry
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sharry
+  template:
+    metadata:
+      labels:
+        app: sharry
+    spec:
+      containers:
+      - image: eikek0/sharry:latest
+        args:
+        - /sharry-config/sharry.conf
+        name: sharry
+        env:
+        - name: SHARRY_INVITE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: sharry-secrets
+              key: SHARRY_INVITE_PASSWORD
+        - name: ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: sharry-secrets
+              key: ADMIN_PASSWORD
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secrets
+              key: POSTGRES_PASSWORD
+        volumeMounts:
+        - mountPath: /sharry-config
+          name: sharry-config-volume
+        ports:
+          - containerPort: 9090
+      volumes:
+      - name: sharry-config-volume
+        configMap:
+          name: sharry-config
