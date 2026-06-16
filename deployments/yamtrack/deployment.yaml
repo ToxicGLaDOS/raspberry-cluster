@@ -49,6 +49,8 @@ spec:
                 key: POSTGRES_PASSWORD
           - name: DB_PORT
             value: "5432"
-      - image: redis:8-alpine
+      # This is my custom image. It fixes a crash. See here for details:
+      # https://github.com/redis/docker-library-redis/issues/521#issuecomment-4418667559
+      - image: toxicglados/redis:8.6.3-alpine-nosearch
         imagePullPolicy: Always
         name: redis
