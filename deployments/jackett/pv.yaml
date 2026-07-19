@@ -12,5 +12,5 @@ spec:
   mountOptions:
     - nfsvers=4.2
   nfs:
-    path: "/watermelon-pool/jackett"
+    path: "/watermelon-pool/encrypted/jackett"
     server: watermelon
