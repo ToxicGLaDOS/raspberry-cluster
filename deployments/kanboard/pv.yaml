@@ -12,5 +12,5 @@ spec:
   mountOptions:
     - nfsvers=4.2
   nfs:
-    path: "/watermelon-pool/kanboard"
+    path: "/watermelon-pool/encrypted/kanboard"
     server: watermelon
