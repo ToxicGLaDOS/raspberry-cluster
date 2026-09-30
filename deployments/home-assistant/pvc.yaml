@@ -1,0 +1,28 @@
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: home-assistant-config-claim
+  namespace: home-assistant
+spec:
+  volumeName: home-assistant-config-volume
+  storageClassName: nfs
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: home-assistant-matter-data-claim
+  namespace: home-assistant
+spec:
+  volumeName: home-assistant-matter-data-volume
+  storageClassName: nfs
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi

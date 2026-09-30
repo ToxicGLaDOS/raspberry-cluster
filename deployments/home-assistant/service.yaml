@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: home-assistant-service
+  namespace: home-assistant
+spec:
+  # dual stack is required for matter compatibility
+  ipFamilyPolicy: RequireDualStack
+  selector:
+    app: home-assistant
+  ports:
+    - protocol: TCP
+      port: 8124
+      targetPort: 8123
+      name: http
+  externalIPs:
+    - 192.168.1.252
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: matter-service
+  namespace: home-assistant
+spec:
+  selector:
+    app: home-assistant
+  ports:
+    - protocol: TCP
+      port: 5580
+      targetPort: 5580
+      name: matter
+  externalIPs:
+    - 192.168.1.252

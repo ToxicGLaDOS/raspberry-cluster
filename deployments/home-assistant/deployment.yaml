@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: home-assistant
+  name: home-assistant
+  namespace: home-assistant
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: home-assistant
+  template:
+    metadata:
+      labels:
+        app: home-assistant
+    spec:
+      # Need hostNetwork to catch mDNS packets from device
+      # for matter compatibility (i think)
+      hostNetwork: true
+      dnsPolicy: Default
+      containers:
+      - image: ghcr.io/home-assistant/home-assistant:stable
+        name: home-assistant
+        env:
+          - name: TZ
+            value: America/Chicago
+        securityContext:
+          runAsUser: 2018 # Maps to the "home-assistant" user on the nas
+          runAsGroup: 2018
+          # Privileged fixes some error in the logs that I can't find
+          # but it still seems to work so meh
+          #privileged: true
+          # This is required for bluetooth on home assistant
+          # but I don't use it so I don't care
+          #capabilities:
+          #  add:
+          #    - "NET_ADMIN"
+          #    - "NET_RAW"
+        volumeMounts:
+          - mountPath: /config
+            name: config
+      - image: ghcr.io/matter-js/matterjs-server:stable
+        name: matter-server
+        args: ["--primary-interface", "end0"]
+        securityContext:
+          runAsUser: 2018 # Maps to the "home-assistant" user on the nas
+          runAsGroup: 2018
+        volumeMounts:
+          - mountPath: /data
+            name: matter-data
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+              claimName: home-assistant-config-claim
+        - name: matter-data
+          persistentVolumeClaim:
+              claimName: home-assistant-matter-data-claim

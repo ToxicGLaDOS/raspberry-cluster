@@ -1,0 +1,33 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: home-assistant-config-volume
+  namespace: home-assistant
+spec:
+  storageClassName: nfs
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
+  mountOptions:
+    - nfsvers=4.2
+  nfs:
+    path: "/watermelon-pool/encrypted/home-assistant/config"
+    server: watermelon
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: home-assistant-matter-data-volume
+  namespace: home-assistant
+spec:
+  storageClassName: nfs
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
+  mountOptions:
+    - nfsvers=4.2
+  nfs:
+    path: "/watermelon-pool/encrypted/home-assistant/matter/data"
+    server: watermelon
