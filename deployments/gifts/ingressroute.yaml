@@ -1,0 +1,16 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: gifts-ingressroute
+  namespace: gifts
+spec:
+  routes:
+  - kind: Rule
+    match: Host(`gifts.blackolivepineapple.pizza`)
+    services:
+    - kind: Service
+      name: gifts-service
+      namespace: gifts
+      port: 8080
+  tls:
+    certResolver: letsencrypt

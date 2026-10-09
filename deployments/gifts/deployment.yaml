@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: gifts
+  name: gifts
+  namespace: gifts
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gifts
+  template:
+    metadata:
+      labels:
+        app: gifts
+    spec:
+      containers:
+      - image: toxicglados/gifts
+        name: gifts
